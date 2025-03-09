@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>㊗️怡鑫宝宝生日快乐🎂</title>
 
-  <!-- 如果没有 styles.css，就在项目同目录下放一个空文件，以免404 -->
+  <!-- 如果没有 styles.css，就在项目根目录下放一个空文件，以免404 -->
   <link rel="stylesheet" href="styles.css">
 
   <style>
@@ -54,7 +54,6 @@
       width: 400px; height: 400px;
       margin: 40px auto;
     }
-    /* 放大照片尺寸 */
     .star-container img {
       position: absolute;
       width: 100px; height: 100px;
@@ -65,27 +64,20 @@
     .star-container img:hover {
       transform: scale(1.1);
     }
-
-    /* 五角星的五个顶点大致布局 -- 可根据需要调节定位 */
     .star1 {
-      top: 0%; left: 50%;
-      transform: translate(-50%, 0);
+      top: 0%; left: 50%; transform: translate(-50%, 0);
     }
     .star2 {
-      top: 20%; left: 90%;
-      transform: translate(-50%, -50%);
+      top: 20%; left: 90%; transform: translate(-50%, -50%);
     }
     .star3 {
-      top: 75%; left: 75%;
-      transform: translate(-50%, -50%);
+      top: 75%; left: 75%; transform: translate(-50%, -50%);
     }
     .star4 {
-      top: 75%; left: 25%;
-      transform: translate(-50%, -50%);
+      top: 75%; left: 25%; transform: translate(-50%, -50%);
     }
     .star5 {
-      top: 20%; left: 10%;
-      transform: translate(-50%, -50%);
+      top: 20%; left: 10%; transform: translate(-50%, -50%);
     }
     .center {
       top: 50%; left: 50%;
@@ -94,15 +86,9 @@
     }
 
     @media (max-width: 768px) {
-      .star-container {
-        width: 300px; height: 300px;
-      }
-      .star-container img {
-        width: 80px; height: 80px;
-      }
-      .center {
-        width: 100px; height: 100px;
-      }
+      .star-container { width: 300px; height: 300px; }
+      .star-container img { width: 80px; height: 80px; }
+      .center { width: 100px; height: 100px; }
     }
 
     .photo-wall {
@@ -118,7 +104,7 @@
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
     }
 
-    /* 中间容器不显示任何消息，但保留输入框+按钮 */
+    /* 中间不显示任何消息，但保留结构 */
     .messages-container {
       display: none;
     }
@@ -162,7 +148,7 @@
       background-color: #FF69B4;
     }
 
-    /* 在不改变原HTML结构的前提下，另行添加两个留言板布局 */
+    /* 左右留言板布局 */
     .two-boards-container {
       position: relative; width: 100%; height: 100%;
     }
@@ -199,10 +185,16 @@
       padding: 10px; border-radius: 10px;
       text-align: center; z-index: 99999;
       opacity: 1; transition: opacity 1s;
+      /* 指定可爱字体：优先尝试“幼圆体”，无则回退 */
+      font-family: 'YouYuan', 'Microsoft Yahei', sans-serif;
     }
     .cat-popup img {
-      width: 100px; display: block;
-      margin: 0 auto;
+      width: 100px; display: block; margin: 0 auto;
+    }
+    /* 猫咪台词文字改为黑色 */
+    .cat-popup p {
+      color: #000;
+      font-size: 1.2em;
     }
   </style>
 </head>
@@ -229,7 +221,7 @@
     <h2>留言板</h2>
     <textarea id="message" placeholder="写下你的祝福"></textarea>
     <button onclick="postMessageFirebase()">发送</button>
-    <!-- 不再显示任何消息在此 -->
+    <!-- 不再显示任何消息在此容器 -->
     <div id="messages" class="messages-container"></div>
   </section>
 
@@ -286,7 +278,7 @@
       }, 2000);
     }
 
-    // 加载留言 (只显示到左右板)
+    // 加载留言 (仅显示到左右板)
     async function loadMessages() {
       try {
         const querySnapshot = await getDocs(collection(db, "messages"));
@@ -324,7 +316,7 @@
           });
           messageBox.value = "";
           loadMessages();
-          // 🏆 显示猫咪特效
+          // 🏆 显示猫咪特效 + 幼圆体 & 黑色字体
           showCatEffect();
         } catch (error) {
           console.error("🔥 Firestore 写入失败: ", error);
@@ -361,6 +353,7 @@
   </script>
 </body>
 </html>
+
 
 
 
