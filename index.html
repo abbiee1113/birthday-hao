@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生日快乐</title>
+    <title>㊗️怡鑫宝宝生日快乐🎂</title>
     <link rel="stylesheet" href="styles.css">
     <style>
         /* 将背景图片虚化，并让文字更清晰 */
@@ -279,91 +279,101 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
-        // TODO: 替换为你自己的Firebase配置
+        // 使用你的 Firebase 配置
         const firebaseConfig = {
-  apiKey: "AIzaSyBKocym2koUb-Dr8REHZ4APJRXFYR3pb-c",
-  authDomain: "birthday-wish-hao.firebaseapp.com",
-  projectId: "birthday-wish-hao",
-  storageBucket: "birthday-wish-hao.firebasestorage.app",
-  messagingSenderId: "479837210750",
-  appId: "1:479837210750:web:c8e11992020be4556cb02f",
-  measurementId: "G-T1V80YYB7R"
-};
-        // 初始化firebase
+          apiKey: "AIzaSyBKocym2koUb-Dr8REHZ4APJRXFYR3pb-c",
+          authDomain: "birthday-wish-hao.firebaseapp.com",
+          projectId: "birthday-wish-hao",
+          storageBucket: "birthday-wish-hao.appspot.com",  /* 修正 storageBucket 后缀 */
+          messagingSenderId: "479837210750",
+          appId: "1:479837210750:web:c8e11992020be4556cb02f",
+          measurementId: "G-T1V80YYB7R"
+        };
+
+        // 初始化 Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 从Firestore加载已保存的留言
+        // 从 Firestore 加载留言
         async function loadMessages() {
+          try {
             const querySnapshot = await getDocs(collection(db, "messages"));
             const messageContainer = document.getElementById("messages");
             messageContainer.innerHTML = "";
 
             let i = 0;
             querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                // 创建气泡
-                let bubble = document.createElement("div");
-                bubble.classList.add("bubble");
+              const data = doc.data();
+              // 创建气泡
+              let bubble = document.createElement("div");
+              bubble.classList.add("bubble");
+              // 左右排布
+              if (i % 2 === 0) {
+                bubble.classList.add("bubble-left");
+              } else {
+                bubble.classList.add("bubble-right");
+              }
+              i++;
 
-                // 左右排布
-                if (i % 2 === 0) {
-                    bubble.classList.add("bubble-left");
-                } else {
-                    bubble.classList.add("bubble-right");
-                }
-                i++;
-
-                bubble.textContent = data.content;
-                messageContainer.appendChild(bubble);
+              bubble.textContent = data.content;
+              messageContainer.appendChild(bubble);
             });
+          } catch (error) {
+            console.error("🔥 Firestore 读取失败: ", error);
+            alert("加载留言失败，请查看控制台错误信息！");
+          }
         }
 
-        // 提交留言到Firestore
+        // 提交留言到 Firestore
         async function postMessage() {
-            let messageBox = document.getElementById("message");
-            if (messageBox.value.trim() !== "") {
-                // 将留言保存到Firebase
-                await addDoc(collection(db, "messages"), {
-                    content: messageBox.value
-                });
-                // 清空输入框
-                messageBox.value = "";
-                // 重新加载所有留言
-                loadMessages();
+          let messageBox = document.getElementById("message");
+          if (messageBox.value.trim() !== "") {
+            try {
+              await addDoc(collection(db, "messages"), {
+                content: messageBox.value
+              });
+              // 清空输入框
+              messageBox.value = "";
+              // 重新加载所有留言
+              loadMessages();
+            } catch (error) {
+              console.error("🔥 Firestore 写入失败: ", error);
+              alert("留言发送失败，请查看控制台错误信息！");
             }
+          }
         }
 
-        // 初次加载时获取留言
+        // 页面加载后，自动获取留言
         document.addEventListener("DOMContentLoaded", loadMessages);
 
         // 大图弹窗
         window.openModal = function(src, altText) {
-            const modal = document.getElementById("photoModal");
-            const modalImg = document.getElementById("modalImg");
-            const caption = document.getElementById("caption");
-            modal.classList.remove("hidden");
-            modalImg.src = src;
-            caption.textContent = altText;
+          const modal = document.getElementById("photoModal");
+          const modalImg = document.getElementById("modalImg");
+          const caption = document.getElementById("caption");
+          modal.classList.remove("hidden");
+          modalImg.src = src;
+          caption.textContent = altText;
         }
         window.closeModal = function() {
-            const modal = document.getElementById("photoModal");
-            modal.classList.add("hidden");
+          const modal = document.getElementById("photoModal");
+          modal.classList.add("hidden");
         }
 
         // 音乐播放控制
         const bgMusic = document.getElementById("bg-music");
         const musicToggle = document.getElementById("musicToggle");
-
         window.toggleMusic = function() {
-            if (bgMusic.paused) {
-                bgMusic.play();
-            } else {
-                bgMusic.pause();
-            }
+          if (bgMusic.paused) {
+            bgMusic.play();
+          } else {
+            bgMusic.pause();
+          }
         }
     </script>
 </body>
 </html>
+
+
 
 
