@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>㊗️怡鑫宝宝生日快乐🎂</title>
 
-  <!-- 如果没有 styles.css，就在项目根目录下放一个空文件，以免404 -->
+  <!-- 如果没有 styles.css，就在项目同目录下放一个空文件，以免404 -->
   <link rel="stylesheet" href="styles.css">
 
   <style>
@@ -26,8 +26,7 @@
     }
 
     .title {
-      font-size: 3em;
-      font-weight: bold;
+      font-size: 3em; font-weight: bold;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
       margin-top: 30px;
     }
@@ -119,10 +118,9 @@
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
     }
 
-    /* 中间容器保留，但不再插入消息 */
+    /* 中间容器不显示任何消息，但保留输入框+按钮 */
     .messages-container {
-      /* 留空，不用于显示留言 */
-      display: none; /* 或者直接让它不显示 */
+      display: none;
     }
 
     /* 弹窗(modal)样式 */
@@ -192,27 +190,37 @@
       background-color: rgba(255, 255, 255, 0.2);
       word-wrap: break-word;
     }
+
+    /* 猫咪特效外层 */
+    .cat-popup {
+      position: fixed; bottom: 20%;
+      left: 50%; transform: translateX(-50%);
+      background: rgba(255,255,255,0.9);
+      padding: 10px; border-radius: 10px;
+      text-align: center; z-index: 99999;
+      opacity: 1; transition: opacity 1s;
+    }
+    .cat-popup img {
+      width: 100px; display: block;
+      margin: 0 auto;
+    }
   </style>
 </head>
 <body>
-  <!-- 加入音乐以及控制按钮 -->
   <audio id="bg-music" src="music.mp3" autoplay loop></audio>
   <header>
     <h1 class="title">Happy Birthday</h1>
     <p class="subtitle">新的一岁祝你继续热烈灿烂 永远都有精力奔向远方</p>
-    <!-- 按钮使用 🎵 符号 -->
     <button id="musicToggle" onclick="toggleMusic()">🎵</button>
   </header>
   
   <section class="photo-wall">
-    <!-- 五角星布局容器 (保留) -->
     <div class="star-container">
       <img src="photo1.jpg" alt="这是什么？原来是和典典大王的泰坦尼克" class="star star1" onclick="openModal('photo1.jpg','这是什么？原来是和典典大王的泰坦尼克')">
       <img src="photo2.jpg" alt="芮芮和妈咪两位公主堂堂登场" class="star star2" onclick="openModal('photo2.jpg','芮芮和妈咪两位公主堂堂登场')">
       <img src="photo3.jpg" alt="这是什么？小猫！亲一下" class="star star3" onclick="openModal('photo3.jpg','这是什么？小猫！亲一下')">
       <img src="photo4.jpg" alt="和小鱼糯糯的温暖hug怎么都不嫌多" class="star star4" onclick="openModal('photo4.jpg','和小鱼糯糯的温暖hug怎么都不嫌多')">
       <img src="photo5.jpg" alt="不要小看妈咪和爹地的羁绊啊" class="star star5" onclick="openModal('photo5.jpg','不要小看妈咪和爹地的羁绊啊')">
-      <!-- 中间空出的位置，放第六张照片 -->
       <img src="photo6.jpg" alt="今日女主角登场！" class="star center" onclick="openModal('photo6.jpg','今日女主角登场！')">
     </div>
   </section>
@@ -221,7 +229,7 @@
     <h2>留言板</h2>
     <textarea id="message" placeholder="写下你的祝福"></textarea>
     <button onclick="postMessageFirebase()">发送</button>
-    <!-- 中间这个容器保留，但不再显示任何留言 -->
+    <!-- 不再显示任何消息在此 -->
     <div id="messages" class="messages-container"></div>
   </section>
 
@@ -236,7 +244,6 @@
     </div>
   </div>
 
-  <!-- Modal: 点击图片时打开 -->
   <div id="photoModal" class="modal hidden">
     <span class="close" onclick="closeModal()">×</span>
     <img class="modal-content" id="modalImg" />
@@ -259,31 +266,41 @@
       measurementId: "G-T1V80YYB7R"
     };
 
-    // 初始化 Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // 加载留言 (仅左/右板)
+    // 猫咪特效：发送成功后出现的小猫提示
+    function showCatEffect() {
+      const pop = document.createElement('div');
+      pop.className = 'cat-popup';
+      pop.innerHTML = `
+        <img src="cat.png" alt="猫咪"/>
+        <p>猫咪大人一定会把祝福带到的哦🐈</p>
+      `;
+      document.body.appendChild(pop);
+
+      // 2秒后开始淡出，再1秒后移除
+      setTimeout(() => {
+        pop.style.opacity = '0';
+        setTimeout(() => pop.remove(), 1000);
+      }, 2000);
+    }
+
+    // 加载留言 (只显示到左右板)
     async function loadMessages() {
       try {
         const querySnapshot = await getDocs(collection(db, "messages"));
-
-        // 只显示到左、右板
         const leftBoard = document.getElementById("leftBoard");
         const rightBoard = document.getElementById("rightBoard");
         leftBoard.innerHTML = "";
         rightBoard.innerHTML = "";
 
-        let i = 1; // 从 1 开始计数
+        let i = 1;
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-
-          // 每个留言用一个 "board-bubble"
           const boardBubble = document.createElement("div");
           boardBubble.classList.add("board-bubble");
           boardBubble.textContent = data.content;
-
-          // 奇数 → 左板，偶数 → 右板
           if (i % 2 === 1) {
             leftBoard.appendChild(boardBubble);
           } else {
@@ -297,7 +314,7 @@
       }
     }
 
-    // 提交留言 (仅保存到 Firestore，然后刷新左右板)
+    // 提交留言 (成功后显示猫咪特效)
     window.postMessageFirebase = async function() {
       const messageBox = document.getElementById("message");
       if (messageBox.value.trim() !== "") {
@@ -305,10 +322,10 @@
           await addDoc(collection(db, "messages"), {
             content: messageBox.value
           });
-          // 清空输入框
           messageBox.value = "";
-          // 重新加载所有留言 (仅左/右板)
           loadMessages();
+          // 🏆 显示猫咪特效
+          showCatEffect();
         } catch (error) {
           console.error("🔥 Firestore 写入失败: ", error);
           alert("留言发送失败，请查看控制台错误信息！");
