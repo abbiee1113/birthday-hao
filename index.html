@@ -233,6 +233,47 @@
         button:hover {
             background-color: #FF69B4;
         }
+
+        /* 在不改变原HTML结构的前提下，另行添加两个留言板布局 */
+        .two-boards-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .board-left, .board-right {
+            position: absolute;
+            top: 20%;
+            width: 25%;
+            background: rgba(0,0,0,0.4);
+            min-height: 300px;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .board-left {
+            left: 0;
+            margin-left: 20px;
+        }
+        .board-right {
+            right: 0;
+            margin-right: 20px;
+        }
+        .board-title {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        .board-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .board-bubble {
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 8px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            word-wrap: break-word;
+        }
     </style>
 </head>
 <body>
@@ -266,6 +307,20 @@
         <!-- 用一个容器来承载留言气泡 -->
         <div id="messages" class="messages-container"></div>
     </section>
+
+    <!-- 在不改变原代码的前提下，额外新增：屏幕左侧和右侧的两个留言板 -->
+    <div class="two-boards-container">
+        <!-- 左侧留言板 -->
+        <div class="board-left">
+            <div class="board-title">左侧留言板</div>
+            <div id="leftBoard" class="board-messages"></div>
+        </div>
+        <!-- 右侧留言板 -->
+        <div class="board-right">
+            <div class="board-title">右侧留言板</div>
+            <div id="rightBoard" class="board-messages"></div>
+        </div>
+    </div>
 
     <!-- Modal: 点击图片时打开 -->
     <div id="photoModal" class="modal hidden">
@@ -301,10 +356,16 @@
             const messageContainer = document.getElementById("messages");
             messageContainer.innerHTML = "";
 
+            // 左右留言板
+            const leftBoard = document.getElementById("leftBoard");
+            const rightBoard = document.getElementById("rightBoard");
+            leftBoard.innerHTML = "";
+            rightBoard.innerHTML = "";
+
             let i = 0;
             querySnapshot.forEach((doc) => {
               const data = doc.data();
-              // 创建气泡
+              // 创建气泡(原有中心留言板)
               let bubble = document.createElement("div");
               bubble.classList.add("bubble");
               // 左右排布
@@ -313,10 +374,20 @@
               } else {
                 bubble.classList.add("bubble-right");
               }
-              i++;
-
               bubble.textContent = data.content;
               messageContainer.appendChild(bubble);
+
+              // 额外：复制到左侧/右侧留言板
+              let boardBubble = document.createElement("div");
+              boardBubble.classList.add("board-bubble");
+              boardBubble.textContent = data.content;
+
+              if (i % 2 === 0) {
+                leftBoard.appendChild(boardBubble);
+              } else {
+                rightBoard.appendChild(boardBubble);
+              }
+              i++;
             });
           } catch (error) {
             console.error("🔥 Firestore 读取失败: ", error);
@@ -373,3 +444,4 @@
     </script>
 </body>
 </html>
+
