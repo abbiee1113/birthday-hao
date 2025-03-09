@@ -56,92 +56,21 @@
             background-color: #FF69B4;
         }
 
-        /* 五角星容器：放在页面中央 */
-        .star-container {
-            position: relative;
-            width: 400px;
-            height: 400px;
-            margin: 40px auto;
-        }
-
-        /* 放大照片尺寸 */
-        .star-container img {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 10px;
-            transition: transform 0.3s ease-in-out;
-            cursor: pointer;
-        }
-        /* 鼠标悬停放大效果 */
-        .star-container img:hover {
-            transform: scale(1.1);
-        }
-
-        /* 五角星的五个顶点大致布局 -- 可根据需要调节定位 */
-        .star1 {
-            top: 0%;
-            left: 50%;
-            transform: translate(-50%, 0);
-        }
-        .star2 {
-            top: 20%;
-            left: 90%;
-            transform: translate(-50%, -50%);
-        }
-        .star3 {
-            top: 75%;
-            left: 75%;
-            transform: translate(-50%, -50%);
-        }
-        .star4 {
-            top: 75%;
-            left: 25%;
-            transform: translate(-50%, -50%);
-        }
-        .star5 {
-            top: 20%;
-            left: 10%;
-            transform: translate(-50%, -50%);
-        }
-        /* 中间位置的照片，加大一些 */
-        .center {
-            top: 50%;
-            left: 50%;
-            width: 120px;
-            height: 120px;
-            transform: translate(-50%, -50%);
-        }
-
-        /* 小屏幕时，适当缩放布局 */
-        @media (max-width: 768px) {
-            .star-container {
-                width: 300px;
-                height: 300px;
-            }
-            .star-container img {
-                width: 80px;
-                height: 80px;
-            }
-            .center {
-                width: 100px;
-                height: 100px;
-            }
-        }
-
-        .photo-wall {
+        /* 两个留言板布局 */
+        .message-container {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
             margin: 20px auto;
-            width: 80%;
         }
 
         .message-board {
-            margin: 20px auto;
+            width: 45%;
             padding: 15px;
             background: rgba(0, 0, 0, 0.5);
             border-radius: 15px;
-            width: 60%;
         }
+
         .message-board h2 {
             color: #fff;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
@@ -154,7 +83,7 @@
             gap: 10px;
         }
         .bubble {
-            max-width: 60%;
+            max-width: 80%;
             padding: 10px;
             border-radius: 10px;
             background-color: rgba(255, 255, 255, 0.2);
@@ -163,216 +92,108 @@
         }
         .bubble-left {
             align-self: flex-start;
-            margin-left: 10%;
-            margin-right: auto;
             text-align: left;
         }
         .bubble-right {
             align-self: flex-end;
-            margin-right: 10%;
-            margin-left: auto;
             text-align: right;
-        }
-
-        /* 弹窗(modal)样式 */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .hidden {
-            display: none;
-        }
-        .modal-content {
-            max-width: 70%;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        .close {
-            position: absolute;
-            top: 30px;
-            right: 40px;
-            color: #fff;
-            font-size: 30px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        #caption {
-            color: #fff;
-            text-align: center;
-            margin-top: 10px;
-            font-size: 1.2em;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-        }
-
-        textarea {
-            width: 80%;
-            height: 100px;
-            border: 1px solid #888;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 1em;
-        }
-        button {
-            margin-top: 10px;
-            background-color: #FFB6C1;
-            border: none;
-            padding: 10px 15px;
-            font-size: 1.2em;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background-color: #FF69B4;
         }
     </style>
 </head>
 <body>
-    <!-- 加入音乐以及控制按钮 -->
     <audio id="bg-music" src="music.mp3" autoplay loop></audio>
     <header>
         <h1 class="title">Happy Birthday</h1>
         <p class="subtitle">新的一岁祝你继续热烈灿烂 永远都有精力奔向远方</p>
-        <!-- 按钮使用 🎵 符号 -->
         <button id="musicToggle" onclick="toggleMusic()">🎵</button>
     </header>
     
-    <section class="photo-wall">
-        <!-- 五角星布局容器 -->
-        <div class="star-container">
-            <!-- 修改alt和点击放大后的标题 -->
-            <img src="photo1.jpg" alt="这是什么？原来是和典典大王的泰坦尼克" class="star star1" onclick="openModal('photo1.jpg','这是什么？原来是和典典大王的泰坦尼克')">
-            <img src="photo2.jpg" alt="芮芮和妈咪两位公主堂堂登场" class="star star2" onclick="openModal('photo2.jpg','芮芮和妈咪两位公主堂堂登场')">
-            <img src="photo3.jpg" alt="这是什么？小猫！亲一下" class="star star3" onclick="openModal('photo3.jpg','这是什么？小猫！亲一下')">
-            <img src="photo4.jpg" alt="和小鱼糯糯的温暖hug怎么都不嫌多" class="star star4" onclick="openModal('photo4.jpg','和小鱼糯糯的温暖hug怎么都不嫌多')">
-            <img src="photo5.jpg" alt="不要小看妈咪和爹地的羁绊啊" class="star star5" onclick="openModal('photo5.jpg','不要小看妈咪和爹地的羁绊啊')">
-            <!-- 中间空出的位置，放第六张照片 -->
-            <img src="photo6.jpg" alt="今日女主角登场！" class="star center" onclick="openModal('photo6.jpg','今日女主角登场！')">
+    <section class="message-container">
+        <div class="message-board" id="left-board">
+            <h2>左侧留言板</h2>
+            <div id="left-messages" class="messages-container"></div>
+        </div>
+        <div class="message-board" id="right-board">
+            <h2>右侧留言板</h2>
+            <div id="right-messages" class="messages-container"></div>
         </div>
     </section>
     
-    <section class="message-board">
-        <h2>留言板</h2>
+    <section class="message-board" style="width: 60%; margin: auto;">
+        <h2>留言输入</h2>
         <textarea id="message" placeholder="写下你的祝福"></textarea>
         <button onclick="postMessage()">发送</button>
-        <!-- 用一个容器来承载留言气泡 -->
-        <div id="messages" class="messages-container"></div>
     </section>
 
-    <!-- Modal: 点击图片时打开 -->
-    <div id="photoModal" class="modal hidden">
-        <span class="close" onclick="closeModal()">×</span>
-        <img class="modal-content" id="modalImg" />
-        <div id="caption"></div>
-    </div>
-
-    <!-- Firebase + Firestore脚本 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
-        // 使用你的 Firebase 配置
         const firebaseConfig = {
           apiKey: "AIzaSyBKocym2koUb-Dr8REHZ4APJRXFYR3pb-c",
           authDomain: "birthday-wish-hao.firebaseapp.com",
           projectId: "birthday-wish-hao",
-          storageBucket: "birthday-wish-hao.appspot.com",  /* 修正 storageBucket 后缀 */
+          storageBucket: "birthday-wish-hao.appspot.com",
           messagingSenderId: "479837210750",
           appId: "1:479837210750:web:c8e11992020be4556cb02f",
           measurementId: "G-T1V80YYB7R"
         };
 
-        // 初始化 Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 从 Firestore 加载留言
         async function loadMessages() {
-          try {
-            const querySnapshot = await getDocs(collection(db, "messages"));
-            const messageContainer = document.getElementById("messages");
-            messageContainer.innerHTML = "";
-
-            let i = 0;
-            querySnapshot.forEach((doc) => {
-              const data = doc.data();
-              // 创建气泡
-              let bubble = document.createElement("div");
-              bubble.classList.add("bubble");
-              // 左右排布
-              if (i % 2 === 0) {
-                bubble.classList.add("bubble-left");
-              } else {
-                bubble.classList.add("bubble-right");
-              }
-              i++;
-
-              bubble.textContent = data.content;
-              messageContainer.appendChild(bubble);
-            });
-          } catch (error) {
-            console.error("🔥 Firestore 读取失败: ", error);
-            alert("加载留言失败，请查看控制台错误信息！");
-          }
-        }
-
-        // 提交留言到 Firestore
-        async function postMessage() {
-          let messageBox = document.getElementById("message");
-          if (messageBox.value.trim() !== "") {
             try {
-              await addDoc(collection(db, "messages"), {
-                content: messageBox.value
-              });
-              // 清空输入框
-              messageBox.value = "";
-              // 重新加载所有留言
-              loadMessages();
+                const querySnapshot = await getDocs(collection(db, "messages"));
+                const leftContainer = document.getElementById("left-messages");
+                const rightContainer = document.getElementById("right-messages");
+                leftContainer.innerHTML = "";
+                rightContainer.innerHTML = "";
+                let i = 0;
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    let bubble = document.createElement("div");
+                    bubble.classList.add("bubble");
+                    if (i % 2 === 0) {
+                        bubble.classList.add("bubble-left");
+                        leftContainer.appendChild(bubble);
+                    } else {
+                        bubble.classList.add("bubble-right");
+                        rightContainer.appendChild(bubble);
+                    }
+                    bubble.textContent = data.content;
+                    i++;
+                });
             } catch (error) {
-              console.error("🔥 Firestore 写入失败: ", error);
-              alert("留言发送失败，请查看控制台错误信息！");
+                console.error("🔥 Firestore 读取失败: ", error);
+                alert("加载留言失败！");
             }
-          }
         }
 
-        // 页面加载后，自动获取留言
+        async function postMessage() {
+            let messageBox = document.getElementById("message");
+            if (messageBox.value.trim() !== "") {
+                try {
+                    await addDoc(collection(db, "messages"), { content: messageBox.value });
+                    messageBox.value = "";
+                    loadMessages();
+                } catch (error) {
+                    console.error("🔥 Firestore 写入失败: ", error);
+                    alert("留言发送失败！");
+                }
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", loadMessages);
 
-        // 大图弹窗
-        window.openModal = function(src, altText) {
-          const modal = document.getElementById("photoModal");
-          const modalImg = document.getElementById("modalImg");
-          const caption = document.getElementById("caption");
-          modal.classList.remove("hidden");
-          modalImg.src = src;
-          caption.textContent = altText;
-        }
-        window.closeModal = function() {
-          const modal = document.getElementById("photoModal");
-          modal.classList.add("hidden");
-        }
-
-        // 音乐播放控制
-        const bgMusic = document.getElementById("bg-music");
-        const musicToggle = document.getElementById("musicToggle");
-        window.toggleMusic = function() {
-          if (bgMusic.paused) {
-            bgMusic.play();
-          } else {
-            bgMusic.pause();
-          }
+        function toggleMusic() {
+            const bgMusic = document.getElementById("bg-music");
+            bgMusic.paused ? bgMusic.play() : bgMusic.pause();
         }
     </script>
 </body>
 </html>
+
 
 
 
