@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>㊗️怡鑫宝宝生日快乐🎂</title>
 
-  <!-- 如果没有 styles.css，请在项目根目录下放一个空文件，避免404 -->
+  <!-- 如果没有 styles.css，就在项目根目录下放一个空文件，以免404 -->
   <link rel="stylesheet" href="styles.css">
 
   <style>
@@ -119,11 +119,10 @@
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
     }
 
-    /* 留言气泡样式 */
+    /* 中间容器保留，但不再插入消息 */
     .messages-container {
-      /* 虽然保留结构，但不再添加任何消息到这里 */
-      display: flex; flex-direction: column;
-      gap: 10px;
+      /* 留空，不用于显示留言 */
+      display: none; /* 或者直接让它不显示 */
     }
 
     /* 弹窗(modal)样式 */
@@ -206,9 +205,8 @@
   </header>
   
   <section class="photo-wall">
-    <!-- 五角星布局容器 -->
+    <!-- 五角星布局容器 (保留) -->
     <div class="star-container">
-      <!-- 照片1~6 保留 -->
       <img src="photo1.jpg" alt="这是什么？原来是和典典大王的泰坦尼克" class="star star1" onclick="openModal('photo1.jpg','这是什么？原来是和典典大王的泰坦尼克')">
       <img src="photo2.jpg" alt="芮芮和妈咪两位公主堂堂登场" class="star star2" onclick="openModal('photo2.jpg','芮芮和妈咪两位公主堂堂登场')">
       <img src="photo3.jpg" alt="这是什么？小猫！亲一下" class="star star3" onclick="openModal('photo3.jpg','这是什么？小猫！亲一下')">
@@ -223,11 +221,10 @@
     <h2>留言板</h2>
     <textarea id="message" placeholder="写下你的祝福"></textarea>
     <button onclick="postMessageFirebase()">发送</button>
-    <!-- 这里保留原容器，但不再使用它显示任何留言 -->
+    <!-- 中间这个容器保留，但不再显示任何留言 -->
     <div id="messages" class="messages-container"></div>
   </section>
 
-  <!-- 左侧与右侧留言板 -->
   <div class="two-boards-container">
     <div class="board-left">
       <div class="board-title">左侧留言板</div>
@@ -266,31 +263,31 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // 加载留言 (只显示在左右板)
+    // 加载留言 (仅左/右板)
     async function loadMessages() {
       try {
         const querySnapshot = await getDocs(collection(db, "messages"));
 
-        // 左右留言板 (仅显示此处)
+        // 只显示到左、右板
         const leftBoard = document.getElementById("leftBoard");
         const rightBoard = document.getElementById("rightBoard");
         leftBoard.innerHTML = "";
         rightBoard.innerHTML = "";
 
-        let i = 1; // 从1开始计数
+        let i = 1; // 从 1 开始计数
         querySnapshot.forEach((doc) => {
           const data = doc.data();
 
-          // 创建气泡
-          let bubble = document.createElement("div");
-          bubble.classList.add("board-bubble");
-          bubble.textContent = data.content;
+          // 每个留言用一个 "board-bubble"
+          const boardBubble = document.createElement("div");
+          boardBubble.classList.add("board-bubble");
+          boardBubble.textContent = data.content;
 
-          // 奇数 → 左侧, 偶数 → 右侧
+          // 奇数 → 左板，偶数 → 右板
           if (i % 2 === 1) {
-            leftBoard.appendChild(bubble);
+            leftBoard.appendChild(boardBubble);
           } else {
-            rightBoard.appendChild(bubble);
+            rightBoard.appendChild(boardBubble);
           }
           i++;
         });
@@ -300,9 +297,9 @@
       }
     }
 
-    // 提交留言到 Firestore
+    // 提交留言 (仅保存到 Firestore，然后刷新左右板)
     window.postMessageFirebase = async function() {
-      let messageBox = document.getElementById("message");
+      const messageBox = document.getElementById("message");
       if (messageBox.value.trim() !== "") {
         try {
           await addDoc(collection(db, "messages"), {
@@ -310,16 +307,16 @@
           });
           // 清空输入框
           messageBox.value = "";
-          // 重新加载所有留言
+          // 重新加载所有留言 (仅左/右板)
           loadMessages();
         } catch (error) {
           console.error("🔥 Firestore 写入失败: ", error);
           alert("留言发送失败，请查看控制台错误信息！");
         }
       }
-    }
+    };
 
-    // 页面加载后，自动获取留言
+    // 页面加载后自动获取留言
     document.addEventListener("DOMContentLoaded", loadMessages);
 
     // 大图弹窗
@@ -332,13 +329,11 @@
       caption.textContent = altText;
     };
     window.closeModal = function() {
-      const modal = document.getElementById("photoModal");
-      modal.classList.add("hidden");
+      document.getElementById("photoModal").classList.add("hidden");
     };
 
     // 音乐播放控制
     const bgMusic = document.getElementById("bg-music");
-    const musicToggle = document.getElementById("musicToggle");
     window.toggleMusic = function() {
       if (bgMusic.paused) {
         bgMusic.play();
