@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日快乐</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+    /* 将背景图片虚化，并让文字更清晰 */$1.star-container {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    margin: 20px auto;
+}
+
+/* 所有星形照片的通用设置 */
+.star-container img {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* 鼠标悬停放大效果 */
+.star-container img:hover {
+    transform: scale(1.1);
+}
+
+/* 五角星的五个顶点大致布局 -- 可根据需要调节定位 */
+.star1 {
+    top: 0%;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+.star2 {
+    top: 35%;
+    left: 95%;
+    transform: translate(-50%, -50%);
+}
+.star3 {
+    top: 90%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+}
+.star4 {
+    top: 90%;
+    left: 20%;
+    transform: translate(-50%, -50%);
+}
+.star5 {
+    top: 35%;
+    left: 5%;
+    transform: translate(-50%, -50%);
+}
+
+/* 中间位置的照片 */
+.center {
+    top: 50%;
+    left: 50%;
+    width: 150px;
+    height: 150px;
+    transform: translate(-50%, -50%);
+}
+
+/* 小屏幕时，适当缩放布局 */
+@media (max-width: 768px) {
+    .star-container {
+        width: 300px;
+        height: 300px;
+    }
+    .star-container img {
+        width: 60px;
+        height: 60px;
+    }
+        .gallery {
+            flex-direction: column;
+            align-items: center;
+        }
+        .message-board {
+            width: 90%;
+        }
+    }
+</style>
+</head>
+<body>
+    <audio id="bg-music" src="music.mp3" autoplay loop></audio>
+    <header>
+        <h1 class="title">Happy Birthday</h1>
+        <p class="subtitle">新的一岁祝你继续热烈灿烂 永远都有精力奔向远方</p>
+    </header>
+    
+    <section class="photo-wall">
+    <h2>我们的美好回忆</h2>
+    <!-- 五角星布局容器 -->
+    <div class="star-container">
+        <!-- 5张照片，围绕星形分布 -->
+        <img src="photo1.jpg" alt="回忆1" class="star star1">
+        <img src="photo2.jpg" alt="回忆2" class="star star2">
+        <img src="photo3.jpg" alt="回忆3" class="star star3">
+        <img src="photo4.jpg" alt="回忆4" class="star star4">
+        <img src="photo5.jpg" alt="回忆5" class="star star5">
+        <!-- 中间空出的位置，放第六张照片 -->
+        <img src="photo6.jpg" alt="回忆6" class="star center">
+    </div>
+</section>
+    
+    <section class="message-board">
+        <h2>留言板</h2>
+        <textarea id="message" placeholder="写下你的祝福"></textarea>
+        <button onclick="postMessage()">发送</button>
+        <div id="messages"></div>
+    </section>
+    
+    <script>
+        function postMessage() {
+            let messageBox = document.getElementById("message");
+            let messages = document.getElementById("messages");
+            if (messageBox.value.trim() !== "") {
+                let newMessage = document.createElement("p");
+                newMessage.textContent = messageBox.value;
+                messages.appendChild(newMessage);
+                messageBox.value = "";
+            }
+        }
+    </script>
+</body>
+</html>
+
