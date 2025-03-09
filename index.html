@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>㊗️怡鑫宝宝生日快乐🎂</title>
+    <!-- 如果你没有 styles.css，请在项目同目录下创建一个空白文件 styles.css -->
     <link rel="stylesheet" href="styles.css">
     <style>
         /* 将背景图片虚化，并让文字更清晰 */
@@ -303,7 +304,8 @@
     <section class="message-board">
         <h2>留言板</h2>
         <textarea id="message" placeholder="写下你的祝福"></textarea>
-        <button onclick="postMessage()">发送</button>
+        <!-- 改这里：保留按钮显示与 onclick，不再命名冲突 -->
+        <button onclick="postMessageFirebase()">发送</button>
         <!-- 用一个容器来承载留言气泡 -->
         <div id="messages" class="messages-container"></div>
     </section>
@@ -390,50 +392,50 @@
               i++;
             });
           } catch (error) {
-            console.error("🔥 Firestore 读取失败: ", error);
-            alert("加载留言失败，请查看控制台错误信息！");
+            console.error(\"🔥 Firestore 读取失败: \", error);
+            alert(\"加载留言失败，请查看控制台错误信息！\");
           }
         }
 
-        // 提交留言到 Firestore
-        async function postMessage() {
-          let messageBox = document.getElementById("message");
-          if (messageBox.value.trim() !== "") {
+        // ⚠️ 重命名留言函数，避免与 window.postMessage 冲突
+        async function postMessageFirebase() {
+          let messageBox = document.getElementById(\"message\");
+          if (messageBox.value.trim() !== \"\") {
             try {
-              await addDoc(collection(db, "messages"), {
+              await addDoc(collection(db, \"messages\"), {
                 content: messageBox.value
               });
               // 清空输入框
-              messageBox.value = "";
+              messageBox.value = \"\";
               // 重新加载所有留言
               loadMessages();
             } catch (error) {
-              console.error("🔥 Firestore 写入失败: ", error);
-              alert("留言发送失败，请查看控制台错误信息！");
+              console.error(\"🔥 Firestore 写入失败: \", error);
+              alert(\"留言发送失败，请查看控制台错误信息！\");
             }
           }
         }
 
         // 页面加载后，自动获取留言
-        document.addEventListener("DOMContentLoaded", loadMessages);
+        document.addEventListener(\"DOMContentLoaded\", loadMessages);
 
         // 大图弹窗
         window.openModal = function(src, altText) {
-          const modal = document.getElementById("photoModal");
-          const modalImg = document.getElementById("modalImg");
-          const caption = document.getElementById("caption");
-          modal.classList.remove("hidden");
+          const modal = document.getElementById(\"photoModal\");
+          const modalImg = document.getElementById(\"modalImg\");
+          const caption = document.getElementById(\"caption\");
+          modal.classList.remove(\"hidden\");
           modalImg.src = src;
           caption.textContent = altText;
         }
         window.closeModal = function() {
-          const modal = document.getElementById("photoModal");
-          modal.classList.add("hidden");
+          const modal = document.getElementById(\"photoModal\");
+          modal.classList.add(\"hidden\");
         }
 
         // 音乐播放控制
-        const bgMusic = document.getElementById("bg-music");
-        const musicToggle = document.getElementById("musicToggle");
+        const bgMusic = document.getElementById(\"bg-music\");
+        const musicToggle = document.getElementById(\"musicToggle\");
         window.toggleMusic = function() {
           if (bgMusic.paused) {
             bgMusic.play();
